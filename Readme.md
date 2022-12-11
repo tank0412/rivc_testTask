@@ -1,5 +1,5 @@
 # Project Stack
-* Java 11
+* Java 17
 * Spring 2.7.5
-* Postgres
+* Postgres 15
 * Lombok
