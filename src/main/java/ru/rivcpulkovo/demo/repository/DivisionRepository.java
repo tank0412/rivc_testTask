@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface DivisionRepository extends CrudRepository<Division, Integer> {
-    Page<Division> findByDateToLessThanAndDateFromGreaterThan(Pageable pageable, Date dateTo, Date dateFrom);
-    List<Division> findByParentDivision(Division division);
-    Division removeById(Integer id);
+    Page<Division> findByDateFromGreaterThanEqualAndDateToLessThanEqualOrDateToIsNull(Pageable pageable, Date dateFrom, Date dateTo);
+    List<Division> findByParentDivisionId(Integer parentDivisionId);
+    int removeById(Integer id);
 
 }

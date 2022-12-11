@@ -3,27 +3,29 @@ package ru.rivcpulkovo.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.rivcpulkovo.demo.entity.Division;
 import ru.rivcpulkovo.demo.service.DivisionService;
 
 import java.util.Date;
 
-@Controller
+@RestController
+@RequestMapping("/division")
 public class DivisionController {
     @Autowired
     private DivisionService divisionService;
 
-    @GetMapping(name = "division")
-    public Page<Division> getDivisionsByDate(Pageable pageable, @RequestParam(name = "dateTo") Date dateTo,
-                                             @RequestParam(name = "dateFrom") Date dateFrom) {
-        return divisionService.getDivisionsByDate(pageable, dateTo, dateFrom);
+    @GetMapping
+    public Page<Division> getDivisionsByDate(Pageable pageable,
+                                             @RequestParam(name = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateFrom,
+                                             @RequestParam(name = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateTo) {
+        return divisionService.getDivisionsByDate(pageable, dateFrom, dateTo);
     }
 
-    @PostMapping(name = "division")
-    public ResponseEntity<Division> addNewDivision(@RequestParam(name = "division") Division division) {
+    @PostMapping
+    public ResponseEntity<Division> addNewDivision(@RequestBody Division division) {
         Division newDivision = divisionService.addNewDivision(division);
         if (newDivision != null) {
             return ResponseEntity.ok(newDivision);
@@ -32,8 +34,8 @@ public class DivisionController {
             return ResponseEntity.badRequest().build();
         }
     }
-    @PutMapping(name = "division")
-    public ResponseEntity<Division> updateDivision(@RequestParam(name = "division") Division division) {
+    @PutMapping
+    public ResponseEntity<Division> updateDivision(@RequestBody Division division) {
         Division updatedDivision = divisionService.updateDivision(division);
         if (updatedDivision != null) {
             return ResponseEntity.ok(updatedDivision);
@@ -43,11 +45,11 @@ public class DivisionController {
         }
     }
 
-    @DeleteMapping(name = "division")
-    public ResponseEntity<Division> deleteDivision(@RequestParam(name = "division") Division division) {
-        Division deletedDivision = divisionService.deleteDivision(division);
-        if (deletedDivision != null) {
-            return ResponseEntity.ok(deletedDivision);
+    @DeleteMapping
+    public ResponseEntity<Division> deleteDivision(@RequestParam(name = "divisionId") Integer divisionId) {
+        boolean deleteResult = divisionService.deleteDivision(divisionId);
+        if (deleteResult) {
+            return ResponseEntity.ok().build();
         }
         else {
             return ResponseEntity.badRequest().build();

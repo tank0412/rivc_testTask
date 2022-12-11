@@ -17,8 +17,8 @@ public class DivisionService {
     @Autowired
     private DivisionRepository divisionRepository;
 
-    public Page<Division> getDivisionsByDate(Pageable pageable, Date dateTo, Date dateFrom) {
-        return divisionRepository.findByDateToLessThanAndDateFromGreaterThan(pageable, dateTo, dateFrom);
+    public Page<Division> getDivisionsByDate(Pageable pageable, Date dateFrom, Date dateTo) {
+        return divisionRepository.findByDateFromGreaterThanEqualAndDateToLessThanEqualOrDateToIsNull(pageable, dateFrom, dateTo);
     }
 
     public Division addNewDivision(Division division) {
@@ -62,21 +62,20 @@ public class DivisionService {
         }
     }
 
-    //@Transactional(rollbackOn = Exception.class)
-    public Division deleteDivision(Division deleteDivision) {
-        //expect that FE provide ID of division
-        Integer divisionId = deleteDivision.getId();
+    @Transactional(rollbackOn = Exception.class)
+    public boolean deleteDivision(Integer divisionId) {
         if (divisionId != null) {
-            List<Division> childDivisions = divisionRepository.findByParentDivision(deleteDivision);
+            List<Division> childDivisions = divisionRepository.findByParentDivisionId(divisionId);
             if (childDivisions.size() == 0) {
-                return divisionRepository.removeById(divisionId);
+                int removeCount = divisionRepository.removeById(divisionId);
+                return removeCount != 0;
             }
             else {
-                return null;
+                return false;
             }
         }
         else {
-            return null;
+            return false;
         }
     }
 }
