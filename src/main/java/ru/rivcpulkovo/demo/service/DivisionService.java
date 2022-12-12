@@ -22,7 +22,8 @@ public class DivisionService {
     }
 
     public Division addNewDivision(Division division) {
-        if (division.getDateFrom() != null) {
+        if (division.getName() != null && division.getDateFrom() != null) {
+            division.setCreationDate(new Date());
             return divisionRepository.save(division);
         } else {
             return null;
